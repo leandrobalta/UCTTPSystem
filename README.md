@@ -1,5 +1,5 @@
 # Frontend
-vite, react, typescript
+vite, react, typescript, shadcn
 
 #Backend 
 undefined
