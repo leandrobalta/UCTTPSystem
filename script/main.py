@@ -216,6 +216,7 @@ def plot_graph(graph: Graph):
     nx.draw(graph.graph, pos, node_color=colors, with_labels=True)
 
     plt.show()
+    plt.waitforbuttonpress()
 
 
 def main():
@@ -224,7 +225,7 @@ def main():
     graph = define_weight(graph)
     graph = generate_schedule(graph)
     format_schedule(graph)
-    # plot_graph(graph)
+    plot_graph(graph)
     graph.print_disciplines()
 
 
