@@ -7,7 +7,7 @@ const createInstitution = async (req, res) => {
     const institution = await institutionService.CreateInstitution(req.body);
     res.status(201).json(createEnvelope(true, "Institution created successfully", institution));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error creating institution"));
+    res.status(500).json(createEnvelope(false, "Error creating institution" + error));
   }
 };
 
@@ -17,7 +17,7 @@ const getInstitutions = async (req, res) => {
     const institutions = await institutionService.GetInstitutions();
     res.status(200).json(createEnvelope(true, "Institutions fetched successfully", institutions));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching institutions"));
+    res.status(500).json(createEnvelope(false, "Error fetching institutions" + error));
   }
 };
 
@@ -30,7 +30,7 @@ const getInstitutionById = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Institution fetched successfully", institution));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching institution"));
+    res.status(500).json(createEnvelope(false, "Error fetching institution" + error));
   }
 };
 
@@ -43,7 +43,7 @@ const updateInstitution = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Institution updated successfully", institution));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error updating institution"));
+    res.status(500).json(createEnvelope(false, "Error updating institution" + error));
   }
 };
 
@@ -53,7 +53,7 @@ const deleteInstitution = async (req, res) => {
     await institutionService.DeleteInstitution(req.params.id);
     res.status(200).json(createEnvelope(true, "Institution deleted successfully"));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error deleting institution"));
+    res.status(500).json(createEnvelope(false, "Error deleting institution" + error));
   }
 };
 

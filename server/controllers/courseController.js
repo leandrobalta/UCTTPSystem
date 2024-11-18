@@ -7,7 +7,7 @@ const createCourse = async (req, res) => {
     const course = await courseService.CreateCourse(req.body);
     res.status(201).json(createEnvelope(true, "Course created successfully", course));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error creating course"));
+    res.status(500).json(createEnvelope(false, "Error creating course" + error));
   }
 };
 
@@ -17,7 +17,7 @@ const getCourses = async (req, res) => {
     const courses = await courseService.GetCourses();
     res.status(200).json(createEnvelope(true, "Courses fetched successfully", courses));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching courses"));
+    res.status(500).json(createEnvelope(false, "Error fetching courses" + error));
   }
 };
 
@@ -30,7 +30,7 @@ const getCourseById = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Course fetched successfully", course));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching course"));
+    res.status(500).json(createEnvelope(false, "Error fetching course" + error));
   }
 };
 
@@ -40,7 +40,7 @@ const updateCourse = async (req, res) => {
     const course = await courseService.UpdateCourse(req.params.id, req.body);
     res.status(200).json(createEnvelope(true, "Course updated successfully", course));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error updating course"));
+    res.status(500).json(createEnvelope(false, "Error updating course" + error));
   }
 };
 
@@ -50,8 +50,7 @@ const deleteCourse = async (req, res) => {
     await courseService.DeleteCourse(req.params.id);
     res.status(200).json(createEnvelope(true, "Course deleted successfully"));
   } catch (error) {
-    console.log(error)
-    res.status(500).json(createEnvelope(false, "Error deleting course"));
+    res.status(500).json(createEnvelope(false, "Error deleting course" + error));
   }
 };
 

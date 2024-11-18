@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS institution (
-    id INTEGER AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT UNIQUE,
     name VARCHAR(255) NOT NULL,
     sigla VARCHAR(15) NOT NULL,
     creationdate DATETIME NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS institution (
 );
 
 CREATE TABLE IF NOT EXISTS professors (
-    id INTEGER AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT UNIQUE,
     registrationnumber VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS professors (
 );
 
 CREATE TABLE IF NOT EXISTS courses (
-    id INTEGER AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT UNIQUE,
     name VARCHAR(50) NOT NULL,
     code VARCHAR(15),
     duration INTEGER NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS courses (
 );
 
 CREATE TABLE IF NOT EXISTS disciplines (
-    id INTEGER AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT UNIQUE,
     code VARCHAR(255),
     name VARCHAR(50) NOT NULL,
     workload INTEGER NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS disciplines (
 );
 
 CREATE TABLE IF NOT EXISTS professor_discipline (
-    id INTEGER AUTO_INCREMENT,
+    id INTEGER AUTO_INCREMENT UNIQUE,
     professorregistration VARCHAR(255) NOT NULL,
     disciplinecode VARCHAR(255) NOT NULL,
     coursecode VARCHAR(15) NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS professor_discipline (
 );
 
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER AUTO_INCREMENT, -- Auto incremento para facilitar a identificação
+    id INTEGER AUTO_INCREMENT UNIQUE, -- Auto incremento para facilitar a identificação
     name VARCHAR(255) NOT NULL, -- Nome do usuário
     email VARCHAR(255) NOT NULL, -- Email do usuário (PK)
     password VARCHAR(255), -- Senha do usuário (pode ser NULL)

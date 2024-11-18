@@ -7,7 +7,7 @@ const createProfessor = async (req, res) => {
     const professor = await professorService.CreateProfessor(req.body);
     res.status(201).json(createEnvelope(true, "Professor created successfully", professor));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error creating professor"));
+    res.status(500).json(createEnvelope(false, "Error creating professor" + error));
   }
 };
 
@@ -17,7 +17,7 @@ const getProfessors = async (req, res) => {
     const professors = await professorService.GetProfessors();
     res.status(200).json(createEnvelope(true, "Professors fetched successfully", professors));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching professors"));
+    res.status(500).json(createEnvelope(false, "Error fetching professors" + error));
   }
 };
 
@@ -30,7 +30,7 @@ const getProfessorById = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Professor fetched successfully", professor));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching professor"));
+    res.status(500).json(createEnvelope(false, "Error fetching professor" + error));
   }
 };
 
@@ -40,7 +40,7 @@ const updateProfessor = async (req, res) => {
     const professor = await professorService.UpdateProfessor(req.params.id, req.body);
     res.status(200).json(createEnvelope(true, "Professor updated successfully", professor));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error updating professor"));
+    res.status(500).json(createEnvelope(false, "Error updating professor" + error));
   }
 };
 
@@ -50,7 +50,7 @@ const deleteProfessor = async (req, res) => {
     await professorService.DeleteProfessor(req.params.id);
     res.status(200).json(createEnvelope(true, "Professor deleted successfully"));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error deleting professor"));
+    res.status(500).json(createEnvelope(false, "Error deleting professor" + error));
   }
 };
 

@@ -7,7 +7,7 @@ const assignProfessorToDiscipline = async (req, res) => {
     const assignment = await professorDisciplineService.AssignProfessorToDiscipline(req.body);
     res.status(201).json(createEnvelope(true, "Professor assigned to discipline successfully", assignment));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error assigning professor to discipline"));
+    res.status(500).json(createEnvelope(false, "Error assigning professor to discipline" + error));
   }
 };
 
@@ -17,7 +17,7 @@ const getAssignments = async (req, res) => {
     const assignments = await professorDisciplineService.GetAssignments();
     res.status(200).json(createEnvelope(true, "Assignments fetched successfully", assignments));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching assignments"));
+    res.status(500).json(createEnvelope(false, "Error fetching assignments" + error));
   }
 };
 
@@ -30,7 +30,7 @@ const getAssignmentById = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Assignment fetched successfully", assignment));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching assignment"));
+    res.status(500).json(createEnvelope(false, "Error fetching assignment" + error));
   }
 };
 
@@ -43,7 +43,7 @@ const updateAssignment = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Assignment updated successfully", assignment));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error updating assignment"));
+    res.status(500).json(createEnvelope(false, "Error updating assignment" + error));
   }
 };
 
@@ -53,7 +53,7 @@ const deleteAssignment = async (req, res) => {
     await professorDisciplineService.DeleteAssignment(req.params.id);
     res.status(200).json(createEnvelope(true, "Assignment deleted successfully"));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error deleting assignment"));
+    res.status(500).json(createEnvelope(false, "Error deleting assignment" + error));
   }
 };
 

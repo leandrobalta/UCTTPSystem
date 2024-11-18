@@ -1,5 +1,5 @@
 const userService = require("../services/userService");
-const createEnvelope = require("../utils/responseEnvelope");
+const createEnvelope = require("../utils/create-envelope.utils");
 
 // Create
 const createUser = async (req, res) => {

@@ -7,7 +7,7 @@ const createDiscipline = async (req, res) => {
     const discipline = await disciplineService.CreateDiscipline(req.body);
     res.status(201).json(createEnvelope(true, "Discipline created successfully", discipline));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error creating discipline"));
+    res.status(500).json(createEnvelope(false, "Error creating discipline" + error));
   }
 };
 
@@ -17,7 +17,7 @@ const getDisciplines = async (req, res) => {
     const disciplines = await disciplineService.GetDisciplines();
     res.status(200).json(createEnvelope(true, "Disciplines fetched successfully", disciplines));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching disciplines"));
+    res.status(500).json(createEnvelope(false, "Error fetching disciplines" + error));
   }
 };
 
@@ -30,7 +30,7 @@ const getDisciplineById = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Discipline fetched successfully", discipline));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error fetching discipline"));
+    res.status(500).json(createEnvelope(false, "Error fetching discipline" + error));
   }
 };
 
@@ -43,7 +43,7 @@ const updateDiscipline = async (req, res) => {
     }
     res.status(200).json(createEnvelope(true, "Discipline updated successfully", discipline));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error updating discipline"));
+    res.status(500).json(createEnvelope(false, "Error updating discipline" + error));
   }
 };
 
@@ -53,7 +53,7 @@ const deleteDiscipline = async (req, res) => {
     await disciplineService.DeleteDiscipline(req.params.id);
     res.status(200).json(createEnvelope(true, "Discipline deleted successfully"));
   } catch (error) {
-    res.status(500).json(createEnvelope(false, "Error deleting discipline"));
+    res.status(500).json(createEnvelope(false, "Error deleting discipline" + error));
   }
 };
 
