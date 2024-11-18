@@ -18,8 +18,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "types": ["jest", "puppeteer"],
   },
-  "include": ["src", "tailwind.config.js"],
+  "include": ["src", "tailwind.config.js", "tests/**/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

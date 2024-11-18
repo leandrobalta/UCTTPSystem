@@ -1,0 +1,16 @@
+{
+  "name": "ucttpsystem",
+  "version": "1.0.0",
+  "description": "vite, react, typescript, shadcn",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -2,8 +2,12 @@ const Professor = require("../models/Professor");
 
 // Create
 const CreateProfessor = async (data) => {
-  const professor = new Professor(data);
-  return await professor.save();
+  try {
+      const professor = new Professor(data);
+      return await professor.save();
+  } catch (e) {
+    console.log(e)
+  }
 };
 
 // List all

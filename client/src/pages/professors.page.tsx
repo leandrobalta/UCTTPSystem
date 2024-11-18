@@ -74,7 +74,11 @@ export function ProfessorsPage() {
     const handleSaveProfessor = async () => {
         setLoading(true);
         if (editDialog) {
-            const updateResp = await ProfessorService.updateProfessor(navigate, editProfessor, editProfessor.registrationNumber);
+            const updateResp = await ProfessorService.updateProfessor(
+                navigate,
+                editProfessor,
+                editProfessor.registrationNumber
+            );
 
             snackbar({
                 severity: updateResp.success ? "success" : "error",
@@ -125,10 +129,11 @@ export function ProfessorsPage() {
         setSearchTerm(value);
 
         // Filtrar os dados com base no termo de pesquisa
-        const filtered = professors.filter((professor) =>
-            professor.name.toLowerCase().includes(value) ||
-            professor.registrationNumber.toLowerCase().includes(value) ||
-            professor.email.toLowerCase().includes(value)
+        const filtered = professors.filter(
+            (professor) =>
+                professor.name.toLowerCase().includes(value) ||
+                professor.registrationNumber.toLowerCase().includes(value) ||
+                professor.email.toLowerCase().includes(value)
         );
         setFilteredProfessors(filtered);
     };
@@ -190,8 +195,9 @@ export function ProfessorsPage() {
                                 <TableCell>{professor.title}</TableCell>
                                 <TableCell>{professor.institutionFk}</TableCell>
                                 <TableCell>
-                                    <Button startIcon={<Edit />} onClick={() => handleEditProfessor(professor)} />
+                                    <Button startIcon={<Edit />} aria-label="editar" onClick={() => handleEditProfessor(professor)} />
                                     <Button
+                                        aria-label="remover"
                                         startIcon={<Delete />}
                                         onClick={() =>
                                             confirm({
@@ -215,6 +221,7 @@ export function ProfessorsPage() {
                     <div className="flex flex-col gap-4">
                         <TextField
                             label="Matrícula"
+                            name="registration"
                             variant="outlined"
                             value={editDialog ? editProfessor.registrationNumber : professorToAdd.registrationNumber}
                             onChange={(e) =>
@@ -226,6 +233,7 @@ export function ProfessorsPage() {
                         />
                         <TextField
                             label="Nome"
+                            name="name"
                             variant="outlined"
                             value={editDialog ? editProfessor.name : professorToAdd.name}
                             onChange={(e) =>
@@ -236,6 +244,7 @@ export function ProfessorsPage() {
                         />
                         <TextField
                             label="Email"
+                            name="email"
                             variant="outlined"
                             value={editDialog ? editProfessor.email : professorToAdd.email}
                             onChange={(e) =>
@@ -246,6 +255,7 @@ export function ProfessorsPage() {
                         />
                         <TextField
                             label="Telefone"
+                            name="phone"
                             variant="outlined"
                             value={editDialog ? editProfessor.phone : professorToAdd.phone}
                             onChange={(e) =>
@@ -257,12 +267,19 @@ export function ProfessorsPage() {
                         <FormControl>
                             <InputLabel id="title-label">Título</InputLabel>
                             <Select
+                                id="degree"
                                 labelId="title-label"
                                 value={editDialog ? editProfessor.title : professorToAdd.title}
                                 onChange={(e) =>
                                     editDialog
-                                        ? setEditProfessor({ ...editProfessor, title: e.target.value as "Specialist" | "Master" | "Doctor" })
-                                        : setProfessorToAdd({ ...professorToAdd, title: e.target.value as "Specialist" | "Master" | "Doctor" })
+                                        ? setEditProfessor({
+                                              ...editProfessor,
+                                              title: e.target.value as "Specialist" | "Master" | "Doctor",
+                                          })
+                                        : setProfessorToAdd({
+                                              ...professorToAdd,
+                                              title: e.target.value as "Specialist" | "Master" | "Doctor",
+                                          })
                                 }
                             >
                                 <MenuItem value="Specialist">Especialista</MenuItem>
@@ -271,6 +288,7 @@ export function ProfessorsPage() {
                             </Select>
                         </FormControl>
                         <TextField
+                            name="institution"
                             label="Instituição"
                             variant="outlined"
                             value={editDialog ? editProfessor.institutionFk : professorToAdd.institutionFk}
@@ -286,11 +304,7 @@ export function ProfessorsPage() {
                     <Button onClick={handleCancel} variant="contained" color="warning">
                         Cancelar
                     </Button>
-                    <Button
-                        onClick={handleSaveProfessor}
-                        variant="contained"
-                        color="primary"
-                    >
+                    <Button onClick={handleSaveProfessor} variant="contained" color="primary">
                         Salvar
                     </Button>
                 </DialogActions>
