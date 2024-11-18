@@ -1,4 +1,4 @@
-export const endpoint = '172.26.162.58';
+export const endpoint = '127.0.0.1';
 
 export const prodPort = "3000";
 
