@@ -1,11 +1,18 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Course = require("./Course");
+const Institution = require("./Institution");
 
 const Discipline = sequelize.define(
   "Discipline",
   {
-    code: {
+    id: {
       type: DataTypes.INTEGER,
+      autoIncrement: true,
+      unique: true,
+    },
+    code: {
+      type: DataTypes.STRING(255),
       allowNull: false,
       primaryKey: true,
     },
@@ -22,7 +29,6 @@ const Discipline = sequelize.define(
       allowNull: false,
       validate: {
         isInt: true,
-        min: 1,
       },
     },
     period: {
@@ -30,14 +36,24 @@ const Discipline = sequelize.define(
       allowNull: false,
       validate: {
         isInt: true,
-        min: 1,
       },
     },
     description: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: true,
-      validate: {
-        len: [0, 100],
+    },
+    courseCode: {
+      type: DataTypes.STRING(15),
+      references: {
+        model: Course,
+        key: "code",
+      },
+    },
+    institutionFk: {
+      type: DataTypes.STRING(15),
+      references: {
+        model: Institution,
+        key: "sigla",
       },
     },
     creationDate: {

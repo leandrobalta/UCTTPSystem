@@ -1,12 +1,13 @@
 const professorService = require("../services/professorService");
+const createEnvelope = require("../utils/create-envelope.utils");
 
 // Create
 const createProfessor = async (req, res) => {
   try {
     const professor = await professorService.CreateProfessor(req.body);
-    res.status(201).json(professor);
+    res.status(201).json(createEnvelope(true, "Professor created successfully", professor));
   } catch (error) {
-    res.status(500).json({ error: "Error creating professor" });
+    res.status(500).json(createEnvelope(false, "Error creating professor"));
   }
 };
 
@@ -14,9 +15,9 @@ const createProfessor = async (req, res) => {
 const getProfessors = async (req, res) => {
   try {
     const professors = await professorService.GetProfessors();
-    res.status(200).json(professors);
+    res.status(200).json(createEnvelope(true, "Professors fetched successfully", professors));
   } catch (error) {
-    res.status(500).json({ error: "Error fetching professors" });
+    res.status(500).json(createEnvelope(false, "Error fetching professors"));
   }
 };
 
@@ -25,24 +26,21 @@ const getProfessorById = async (req, res) => {
   try {
     const professor = await professorService.GetProfessorById(req.params.id);
     if (!professor) {
-      return res.status(404).json({ error: "Professor not found" });
+      return res.status(404).json(createEnvelope(false, "Professor not found"));
     }
-    res.status(200).json(professor);
+    res.status(200).json(createEnvelope(true, "Professor fetched successfully", professor));
   } catch (error) {
-    res.status(500).json({ error: "Error fetching professor" });
+    res.status(500).json(createEnvelope(false, "Error fetching professor"));
   }
 };
 
 // Update
 const updateProfessor = async (req, res) => {
   try {
-    const professor = await professorService.UpdateProfessor(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json(professor);
+    const professor = await professorService.UpdateProfessor(req.params.id, req.body);
+    res.status(200).json(createEnvelope(true, "Professor updated successfully", professor));
   } catch (error) {
-    res.status(500).json({ error: "Error updating professor" });
+    res.status(500).json(createEnvelope(false, "Error updating professor"));
   }
 };
 
@@ -50,9 +48,9 @@ const updateProfessor = async (req, res) => {
 const deleteProfessor = async (req, res) => {
   try {
     await professorService.DeleteProfessor(req.params.id);
-    res.status(204).end();
+    res.status(200).json(createEnvelope(true, "Professor deleted successfully"));
   } catch (error) {
-    res.status(500).json({ error: "Error deleting professor" });
+    res.status(500).json(createEnvelope(false, "Error deleting professor"));
   }
 };
 

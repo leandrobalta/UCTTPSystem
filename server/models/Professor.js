@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Institution = require("./Institution");
 
 const Professor = sequelize.define(
   "Professor",
@@ -7,28 +8,53 @@ const Professor = sequelize.define(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
+      unique: true,
+    },
+    registrationNumber: {
+      type: DataTypes.STRING(255),
       primaryKey: true,
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: [1, 255],
+      },
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
       unique: true,
+      validate: {
+        isEmail: true,
+        notEmpty: true,
+      },
     },
     phone: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
     },
     title: {
       type: DataTypes.ENUM("Specialist", "Master", "Doctor"),
-      allowNull: false,
+    },
+    institutionFk: {
+      type: DataTypes.STRING(15),
+      references: {
+        model: Institution,
+        key: "sigla",
+      },
     },
     creationDate: {
       type: DataTypes.DATE,
+      allowNull: false,
       defaultValue: DataTypes.NOW,
+      validate: {
+        isDate: true,
+      },
     },
   },
   {

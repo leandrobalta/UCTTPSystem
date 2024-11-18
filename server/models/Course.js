@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Professor = require("./Professor");
+const Institution = require("./Institution");
 
 const Course = sequelize.define(
   "Course",
@@ -8,6 +8,10 @@ const Course = sequelize.define(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
+      unique: true,
+    },
+    code: {
+      type: DataTypes.STRING(15),
       primaryKey: true,
     },
     name: {
@@ -27,21 +31,17 @@ const Course = sequelize.define(
       },
     },
     description: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: true,
       validate: {
-        len: [0, 100],
+        len: [0, 255],
       },
     },
-    coordinatorId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    institutionFk: {
+      type: DataTypes.STRING(15),
       references: {
-        model: Professor,
-        key: "id",
-      },
-      validate: {
-        isInt: true,
+        model: Institution,
+        key: "sigla",
       },
     },
     creationDate: {
