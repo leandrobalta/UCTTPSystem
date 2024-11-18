@@ -13,6 +13,7 @@ import { ProfessorsPage } from "./pages/professors.page.tsx";
 import NotFoundPage from "./pages/notfound.page.tsx";
 import { DisciplinesPage } from "./pages/disciplines.page.tsx";
 import { HomePage } from "./pages/home.page.tsx";
+import { UserPage } from "./pages/users.page.tsx";
 //import Login from "./pages/login.page.tsx";
 //import PrivateRoute from "./components/private-route.tsx";
 //import AdminRoute from "./components/admin-route.tsx";
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
         path: "/",
         element: (
             // <PrivateRoute>
-                <App />
+            <App />
             // </PrivateRoute>
         ),
         children: [
@@ -51,9 +52,12 @@ const router = createBrowserRouter([
             {
                 path: "/courses",
                 element: <CoursesPage />,
-            }
+            },
+            {
+                path: "/users",
+                element: <UserPage />,
+            },
             // ...
-
 
             // example of admin page
             // {

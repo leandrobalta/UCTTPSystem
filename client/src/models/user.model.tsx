@@ -1,8 +1,14 @@
 import { BaseModel } from "./base.model";
 
 export interface UserModel extends BaseModel {
-    userName: string;
+    name: string;
     email: string;
     password: string | null;
-    isAdmin: boolean;
+    institutionFk: string;
+    userLevel: UserLevel;
+}
+
+export enum UserLevel {
+    ADMIN = "ADMIN",
+    USER = "USER",
 }

@@ -9,10 +9,10 @@ import {
     ListItemText,
     Toolbar,
 } from "@mui/material";
-import EventSeatIcon from '@mui/icons-material/EventSeat';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import MovingIcon from '@mui/icons-material/Moving';
-import PersonIcon from '@mui/icons-material/Person';
+import EventSeatIcon from "@mui/icons-material/EventSeat";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+import MovingIcon from "@mui/icons-material/Moving";
+import PersonIcon from "@mui/icons-material/Person";
 import React from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
@@ -58,14 +58,13 @@ function DesktopSideBar(props: CustomSideBarProps) {
     );
 }
 
-
 export default function SideBar() {
     const navigate = useNavigate();
-    
+
     const [open, setOpen] = React.useState(true);
-    
+
     const pages = [{ name: "Viagens", icon: <DirectionsBusIcon />, path: "/travels" }];
-    
+
     return (
         <>
             <DesktopSideBar open={open} pages={pages} setOpen={setOpen} navigate={navigate} />
@@ -75,7 +74,7 @@ export default function SideBar() {
 
 export function CustomSideBar() {
     let pages = [{ name: "Reservas", icon: <EventSeatIcon />, path: "/reservations" }];
-    if (sessionStorage.getItem("aXNBZG1pbg==") === "ZmxhZ3tuMF92dWxuM3I0YjFsaXRpM3NfaDNyM30="){
+    if (sessionStorage.getItem("aXNBZG1pbg==") === "ZmxhZ3tuMF92dWxuM3I0YjFsaXRpM3NfaDNyM30=") {
         // append users, buses and control trips to the sidebar
         pages.push({ name: "Ônibus", icon: <DirectionsBusIcon />, path: "/bus" });
         pages.push({ name: "Viagens", icon: <MovingIcon />, path: "/trips" });
@@ -101,7 +100,7 @@ export function CustomSideBar() {
                     ))}
                 </List>
             </div>
-            <Divider orientation="vertical" sx={{ height: "100%" }}/>
+            <Divider orientation="vertical" sx={{ height: "100%" }} />
         </>
     );
-};
+}

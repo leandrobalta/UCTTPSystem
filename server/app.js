@@ -4,6 +4,7 @@ const sequelize = require("./config/database");
 const professorRoutes = require("./routes/professorRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const disciplineRoutes = require("./routes/disciplineRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const cors = require("cors");
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/stp", professorRoutes);
 app.use("/stp", courseRoutes);
 app.use("/stp", disciplineRoutes);
+app.use("/stp", userRoutes);
 
 sequelize
   .sync()

@@ -1,37 +1,40 @@
-// src/components/UserControlPage.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Add, Edit, Delete, Search } from "@mui/icons-material";
 import {
-    Table,
-    TableBody,
-    TableCell,
+    Button,
     TableContainer,
+    Paper,
+    Table,
     TableHead,
     TableRow,
-    Paper,
-    Button,
-    TextField,
-    Checkbox,
-    FormControlLabel,
+    TableCell,
+    TableBody,
     Dialog,
-    DialogActions,
-    DialogContent,
     DialogTitle,
+    DialogContent,
+    TextField,
+    DialogActions,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    InputAdornment,
 } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
-import { useConfirm } from "../hooks/use-alert-utils";
-import { UserModel } from "../models/user.model";
-import { UserService } from "../services/user.service";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "../hooks/use-alert-utils";
+import { useConfirm, useSnackbar } from "../hooks/use-alert-utils";
 import { useLoading } from "../hooks/use-loading";
+import { UserModel, UserLevel } from "../models/user.model";
+import { UserService } from "../services/user.service";
 
-export const UsersPage: React.FC = () => {
+export function UserPage() {
     const { confirm } = useConfirm();
     const navigate = useNavigate();
     const { snackbar } = useSnackbar();
     const { setLoading } = useLoading();
 
     const [users, setUsers] = useState<UserModel[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<UserModel[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [addOpen, setAddOpen] = useState(false);
     const [editDialog, setEditDialog] = useState(false);
     const [editUser, setEditUser] = useState<UserModel>({} as UserModel);
@@ -48,7 +51,7 @@ export const UsersPage: React.FC = () => {
         }
     };
 
-    const callGetAllUsers = async () => {
+    const fetchUsers = async () => {
         setLoading(true);
         const response = await UserService.getAllUsers(navigate);
 
@@ -62,6 +65,7 @@ export const UsersPage: React.FC = () => {
 
         if (response.data) {
             setUsers(response.data);
+            setFilteredUsers(response.data); // Inicializa com todos os usuários
         }
 
         setLoading(false);
@@ -70,13 +74,7 @@ export const UsersPage: React.FC = () => {
     const handleSaveUser = async () => {
         setLoading(true);
         if (editDialog) {
-            let userToEdit = { ...editUser };
-
-            if (userToEdit.password === users.find((u) => u.id === userToEdit.id)?.password) {
-                userToEdit.password = null;
-            }
-
-            const updateResp = await UserService.updateUser(navigate, userToEdit);
+            const updateResp = await UserService.updateUser(navigate, editUser, editUser.email);
 
             snackbar({
                 severity: updateResp.success ? "success" : "error",
@@ -84,7 +82,7 @@ export const UsersPage: React.FC = () => {
                 delay: 5000,
             });
 
-            callGetAllUsers();
+            fetchUsers();
         } else {
             const addResp = await UserService.addUser(navigate, userToAdd);
 
@@ -94,7 +92,7 @@ export const UsersPage: React.FC = () => {
                 delay: 5000,
             });
 
-            callGetAllUsers();
+            fetchUsers();
         }
         setLoading(false);
         setAddOpen(false);
@@ -111,7 +109,7 @@ export const UsersPage: React.FC = () => {
             delay: 5000,
         });
 
-        callGetAllUsers();
+        fetchUsers();
         setLoading(false);
     };
 
@@ -122,120 +120,80 @@ export const UsersPage: React.FC = () => {
         handleDialogClose();
     };
 
-    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (editDialog) {
-            setEditUser({ ...editUser, userName: e.target.value });
-        } else {
-            setUserToAdd({ ...userToAdd, userName: e.target.value });
-        }
-    };
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value.toLowerCase();
+        setSearchTerm(value);
 
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (editDialog) {
-            setEditUser({ ...editUser, email: e.target.value });
-        } else {
-            setUserToAdd({ ...userToAdd, email: e.target.value });
-        }
-    };
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (editDialog) {
-            setEditUser({ ...editUser, password: e.target.value });
-        } else {
-            setUserToAdd({ ...userToAdd, password: e.target.value });
-        }
-    };
-
-    const handleIsAdminChange = (e: React.SyntheticEvent<Element, Event>) => {
-        const target = e.target as HTMLInputElement;
-        if (editDialog) {
-            setEditUser({ ...editUser, isAdmin: target.checked });
-        } else {
-            setUserToAdd({ ...userToAdd, isAdmin: target.checked });
-        }
-    };
-
-    const editAndSaveDialogDisabled = () => {
-        if (editDialog) {
-            return (
-                !editUser.userName ||
-                !editUser.email ||
-                !editUser.password ||
-                editUser === users.find((u) => u.id === editUser.id)
-            );
-        } else {
-            return !userToAdd.userName || !userToAdd.email || !userToAdd.password;
-        }
+        // Filtrar os dados com base no termo de pesquisa
+        const filtered = users.filter(
+            (user) =>
+                user.name.toLowerCase().includes(value) ||
+                user.email.toLowerCase().includes(value) ||
+                user.institutionFk.toLowerCase().includes(value)
+        );
+        setFilteredUsers(filtered);
     };
 
     useEffect(() => {
-        callGetAllUsers();
+        fetchUsers();
     }, []);
 
     return (
         <div className="flex flex-col gap-4 p-4 h-full w-full items-start bg-[#f8f6f7]">
-            <Button
-                startIcon={<Add />}
-                variant="contained"
-                color="primary"
-                onClick={handleDialogOpen}
-                className="m-4 self-end"
-            >
-                Adicionar Usuário
-            </Button>
+            {/* Barra de Pesquisa e Botão Adicionar */}
+            <div className="flex w-full justify-between items-center">
+                <TextField
+                    label="Pesquisar"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    fullWidth
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <Button
+                    startIcon={<Add />}
+                    variant="contained"
+                    color="primary"
+                    onClick={handleDialogOpen}
+                    className="ml-4"
+                >
+                    Adicionar Usuário
+                </Button>
+            </div>
 
-            <TableContainer component={Paper} className="">
+            {/* Tabela */}
+            <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                ID
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Criado em
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Atualizado em
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Criado por
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Atualizado por
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Usuario
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Email
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                Senha (Encriptografada)
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                {"É administrador"}
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="center">
-                                {"Ações"}
-                            </TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Nível</TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Instituição</TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {users.map((user) => (
+                        {filteredUsers.map((user) => (
                             <TableRow key={user.id}>
-                                <TableCell align="center">{user.id}</TableCell>
-                                <TableCell align="center">{user.userName}</TableCell>
-                                <TableCell align="center">{user.email}</TableCell>
-                                <TableCell align="center">{user.password}</TableCell>
-                                <TableCell align="center">{user.isAdmin ? "Sim" : "Não"}</TableCell>
-                                <TableCell align="center">
-                                    <Button startIcon={<Edit />} onClick={(_e) => handleEditUser(user)} />
+                                <TableCell>{user.name}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.userLevel}</TableCell>
+                                <TableCell>{user.institutionFk}</TableCell>
+                                <TableCell>
+                                    <Button startIcon={<Edit />} onClick={() => handleEditUser(user)} />
                                     <Button
                                         startIcon={<Delete />}
-                                        onClick={(_e) =>
+                                        onClick={() =>
                                             confirm({
                                                 title: "Deletar Usuário",
-                                                description: `Tem certeza que deseja deletar o usuário ${user.userName}?. Essa ação é irreversível.`,
+                                                description: `Tem certeza que deseja deletar o usuário [${user.name}]? Essa ação é irreversível.`,
                                                 handleConfirm: () => handleDeleteUser(user),
                                             })
                                         }
@@ -247,69 +205,77 @@ export const UsersPage: React.FC = () => {
                 </Table>
             </TableContainer>
 
+            {/* Diálogo de Adicionar/Editar */}
             <Dialog open={addOpen} onClose={handleDialogClose}>
-                <DialogTitle sx={{ fontWeight: "bold" }}>
-                    {editDialog ? "Editar informações do usuário" : "Adicionar usuário"}
-                </DialogTitle>
+                <DialogTitle>{editDialog ? "Editar Usuário" : "Adicionar Usuário"}</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="username"
-                        label="Usuario"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        value={editDialog ? editUser?.userName : userToAdd?.userName}
-                        onChange={handleUsernameChange}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="email"
-                        label="Email"
-                        type="email"
-                        fullWidth
-                        variant="outlined"
-                        value={editDialog ? editUser?.email : userToAdd.email}
-                        onChange={handleEmailChange}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="password"
-                        label="Senha (Nao encriptada)"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        value={editDialog ? editUser?.password : userToAdd.password}
-                        onChange={handlePasswordChange}
-                    />
-                    <FormControlLabel
-                        control={<Checkbox checked={editDialog ? editUser?.isAdmin : userToAdd.isAdmin} />}
-                        label="É administrador?"
-                        value={editDialog ? editUser?.isAdmin : userToAdd.isAdmin}
-                        onChange={handleIsAdminChange}
-                    />
+                    <div className="flex flex-col gap-4">
+                        <TextField
+                            label="Nome"
+                            variant="outlined"
+                            value={editDialog ? editUser.name : userToAdd.name}
+                            onChange={(e) =>
+                                editDialog
+                                    ? setEditUser({ ...editUser, name: e.target.value })
+                                    : setUserToAdd({ ...userToAdd, name: e.target.value })
+                            }
+                        />
+                        <TextField
+                            label="Email"
+                            variant="outlined"
+                            value={editDialog ? editUser.email : userToAdd.email}
+                            onChange={(e) =>
+                                editDialog
+                                    ? setEditUser({ ...editUser, email: e.target.value })
+                                    : setUserToAdd({ ...userToAdd, email: e.target.value })
+                            }
+                            disabled={editDialog}
+                        />
+                        {!editDialog && (
+                            <TextField
+                                label="Senha"
+                                variant="outlined"
+                                type="password"
+                                value={userToAdd.password || ""}
+                                onChange={(e) => setUserToAdd({ ...userToAdd, password: e.target.value })}
+                            />
+                        )}
+                        <FormControl>
+                            <InputLabel id="user-level-label">Nível</InputLabel>
+                            <Select
+                                labelId="user-level-label"
+                                value={editDialog ? editUser.userLevel : userToAdd.userLevel}
+                                onChange={(e) =>
+                                    editDialog
+                                        ? setEditUser({ ...editUser, userLevel: e.target.value as UserLevel })
+                                        : setUserToAdd({ ...userToAdd, userLevel: e.target.value as UserLevel })
+                                }
+                            >
+                                <MenuItem value={UserLevel.ADMIN}>Administrador</MenuItem>
+                                <MenuItem value={UserLevel.USER}>Usuário</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Instituição"
+                            variant="outlined"
+                            value={editDialog ? editUser.institutionFk : userToAdd.institutionFk}
+                            onChange={(e) =>
+                                editDialog
+                                    ? setEditUser({ ...editUser, institutionFk: e.target.value })
+                                    : setUserToAdd({ ...userToAdd, institutionFk: e.target.value })
+                            }
+                        />
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCancel} variant="contained" color="warning">
                         Cancelar
                     </Button>
-                    <Button
-                        onClick={(_e) =>
-                            confirm({
-                                title: "Salvar Usuário",
-                                description: `Tem certeza que deseja salvar o usuário?`,
-                                handleConfirm: handleSaveUser,
-                            })
-                        }
-                        variant="contained"
-                        color="primary"
-                        disabled={editAndSaveDialogDisabled()}
-                    >
+                    <Button onClick={handleSaveUser} variant="contained" color="primary">
                         Salvar
                     </Button>
                 </DialogActions>
             </Dialog>
         </div>
     );
-};
+}

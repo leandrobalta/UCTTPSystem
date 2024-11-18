@@ -56,7 +56,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     backgroundAttachment: "fixed",
     backgroundSize: "20rem 20rem",
 
-    
     // set background brightness to 0.5 without use filter
 }));
 
@@ -125,6 +124,7 @@ export default function BasePage({ children }: any) {
     let pages = [{ name: "Professores", icon: <PersonIcon />, path: "/professors" }];
     pages.push({ name: "Disciplinas", icon: <PersonIcon />, path: "/disciplines" });
     pages.push({ name: "Cursos", icon: <PersonIcon />, path: "/courses" });
+    pages.push({ name: "Usuários", icon: <PersonIcon />, path: "/users" });
 
     // POG for admin pages
     // if (sessionStorage.getItem("aXNBZG1pbg==") === "ZmxhZ3tuMF92dWxuM3I0YjFsaXRpM3NfaDNyM30=") {

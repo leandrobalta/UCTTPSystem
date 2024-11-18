@@ -32,14 +32,12 @@ const getAllCourses = async (navFunction: NavigateFunction) => {
         navFunction,
         port: prodPort,
         https: isHttps,
-        
     });
 
     return response;
 };
 
 const addCourse = async (navFunction: NavigateFunction, course: CourseModel) => {
-
     const response = await ApiService.call<any>({
         action: "stp/course",
         method: HttpMethod.POST,
@@ -53,7 +51,6 @@ const addCourse = async (navFunction: NavigateFunction, course: CourseModel) => 
 };
 
 const updateCourse = async (navFunction: NavigateFunction, course: CourseModel, id: string) => {
-
     const response = await ApiService.call<any>({
         action: "stp/course/" + id,
         method: HttpMethod.PUT,
