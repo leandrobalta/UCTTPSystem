@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "fuser -k 5173/tcp || true && start-server-and-test dev http://localhost:5173 cypress:run",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@date-io/dayjs": "^3.0.0",
@@ -43,6 +44,7 @@
     "npm": "^10.9.0",
     "postcss": "^8.4.35",
     "react-input-mask": "3.0.0-alpha.2",
+    "start-server-and-test": "^2.0.8",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3",
