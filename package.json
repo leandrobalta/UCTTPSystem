@@ -4,7 +4,11 @@
   "description": "vite, react, typescript, shadcn",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "dev": "concurrently \"npm:dev:client\" \"npm:dev:server\"",
+    "test": "start-server-and-test dev http://localhost:5173 cypress:run",
+    "cypress:run": "npm run cypress:run --workspace=client"
   },
   "workspaces": [
     "client",
@@ -12,5 +16,8 @@
   ],
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
 }
