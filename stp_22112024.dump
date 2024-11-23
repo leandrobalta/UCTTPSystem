@@ -1,0 +1,247 @@
+/*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19-11.5.2-MariaDB, for osx10.19 (arm64)
+--
+-- Host: localhost    Database: stp
+-- ------------------------------------------------------
+-- Server version	11.5.2-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
+
+--
+-- Table structure for table `courses`
+--
+
+DROP TABLE IF EXISTS `courses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `code` varchar(15) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `institutionfk` varchar(15) DEFAULT NULL,
+  `creationdate` datetime NOT NULL,
+  PRIMARY KEY (`code`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `id_2` (`id`),
+  KEY `institutionfk` (`institutionfk`),
+  CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`institutionfk`) REFERENCES `institution` (`sigla`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `courses`
+--
+
+LOCK TABLES `courses` WRITE;
+/*!40000 ALTER TABLE `courses` DISABLE KEYS */;
+INSERT INTO `courses` VALUES
+(2,'Ciência da Computação','CCOMP',8,'Curso de graduação em Ciência da Computação','UNIFEI','2024-11-18 19:27:12'),
+(1,'Engenharia de Computação','ECOMP',10,'Curso de graduação em Engenharia de Computação','UNIFEI','2024-11-18 19:27:12');
+/*!40000 ALTER TABLE `courses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `disciplines`
+--
+
+DROP TABLE IF EXISTS `disciplines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `disciplines` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `workload` int(11) NOT NULL,
+  `period` int(11) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `creationdate` datetime NOT NULL,
+  `coursecode` varchar(15) NOT NULL,
+  `institutionfk` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`code`,`coursecode`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `id_2` (`id`),
+  KEY `coursecode` (`coursecode`),
+  KEY `institutionfk` (`institutionfk`),
+  CONSTRAINT `disciplines_ibfk_1` FOREIGN KEY (`coursecode`) REFERENCES `courses` (`code`),
+  CONSTRAINT `disciplines_ibfk_2` FOREIGN KEY (`institutionfk`) REFERENCES `institution` (`sigla`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `disciplines`
+--
+
+LOCK TABLES `disciplines` WRITE;
+/*!40000 ALTER TABLE `disciplines` DISABLE KEYS */;
+INSERT INTO `disciplines` VALUES
+(4,'CC101','Matemática Discreta',60,1,'Conceitos básicos de matemática discreta','2024-11-18 19:27:12','CCOMP','UNIFEI'),
+(5,'CC102','Banco de Dados',60,3,'Conceitos e aplicações de banco de dados','2024-11-18 19:27:12','CCOMP','UNIFEI'),
+(1,'EC101','Algoritmos e Programação',60,1,'Introdução à programação e algoritmos','2024-11-18 19:27:12','ECOMP','UNIFEI'),
+(2,'EC102','Estruturas de Dados',60,2,'Estruturas básicas e avançadas de dados','2024-11-18 19:27:12','ECOMP','UNIFEI'),
+(3,'EC103','Sistemas Operacionais',60,3,'Conceitos e aplicações de sistemas operacionais','2024-11-18 19:27:12','ECOMP','UNIFEI');
+/*!40000 ALTER TABLE `disciplines` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `institution`
+--
+
+DROP TABLE IF EXISTS `institution`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `institution` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `sigla` varchar(15) NOT NULL,
+  `creationdate` datetime NOT NULL,
+  PRIMARY KEY (`sigla`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `id_2` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `institution`
+--
+
+LOCK TABLES `institution` WRITE;
+/*!40000 ALTER TABLE `institution` DISABLE KEYS */;
+INSERT INTO `institution` VALUES
+(1,'Universidade Federal de Itajubá','UNIFEI','2024-11-18 19:27:12');
+/*!40000 ALTER TABLE `institution` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `professor_discipline`
+--
+
+DROP TABLE IF EXISTS `professor_discipline`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `professor_discipline` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `professorregistration` varchar(255) NOT NULL,
+  `disciplinecode` varchar(255) NOT NULL,
+  `coursecode` varchar(15) NOT NULL,
+  `creationdate` datetime NOT NULL,
+  PRIMARY KEY (`professorregistration`,`disciplinecode`,`coursecode`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `id_2` (`id`),
+  KEY `disciplinecode` (`disciplinecode`,`coursecode`),
+  CONSTRAINT `professor_discipline_ibfk_1` FOREIGN KEY (`professorregistration`) REFERENCES `professors` (`registrationnumber`),
+  CONSTRAINT `professor_discipline_ibfk_2` FOREIGN KEY (`disciplinecode`, `coursecode`) REFERENCES `disciplines` (`code`, `coursecode`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `professor_discipline`
+--
+
+LOCK TABLES `professor_discipline` WRITE;
+/*!40000 ALTER TABLE `professor_discipline` DISABLE KEYS */;
+INSERT INTO `professor_discipline` VALUES
+(4,'P001','CC101','CCOMP','2024-11-18 19:27:12'),
+(1,'P001','EC101','ECOMP','2024-11-18 19:27:12'),
+(2,'P002','EC102','ECOMP','2024-11-18 19:27:12'),
+(5,'P003','CC102','CCOMP','2024-11-18 19:27:12'),
+(3,'P003','EC103','ECOMP','2024-11-18 19:27:12');
+/*!40000 ALTER TABLE `professor_discipline` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `professors`
+--
+
+DROP TABLE IF EXISTS `professors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `professors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `registrationnumber` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `title` enum('Specialist','Master','Doctor') DEFAULT NULL,
+  `institutionfk` varchar(15) DEFAULT NULL,
+  `creationdate` datetime NOT NULL,
+  PRIMARY KEY (`registrationnumber`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `registrationnumber` (`registrationnumber`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `id_2` (`id`),
+  KEY `institutionfk` (`institutionfk`),
+  CONSTRAINT `professors_ibfk_1` FOREIGN KEY (`institutionfk`) REFERENCES `institution` (`sigla`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `professors`
+--
+
+LOCK TABLES `professors` WRITE;
+/*!40000 ALTER TABLE `professors` DISABLE KEYS */;
+INSERT INTO `professors` VALUES
+(1,'P001','Dr. João da Silva','joao.silva@unifei.edu.br','(35)99999-0001','Doctor','UNIFEI','2024-11-18 19:27:12'),
+(2,'P002','Profa. Maria Oliveira','maria.oliveira@unifei.edu.br','(35)99999-0002','Master','UNIFEI','2024-11-18 19:27:12'),
+(3,'P003','Dr. Carlos Pereira','carlos.pereira@unifei.edu.br','(35)99999-0003','Doctor','UNIFEI','2024-11-18 19:27:12');
+/*!40000 ALTER TABLE `professors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `institutionFk` varchar(15) DEFAULT NULL,
+  `userLevel` enum('ADMIN','USER') NOT NULL,
+  `creationDate` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`email`),
+  UNIQUE KEY `id` (`id`),
+  KEY `institutionFk` (`institutionFk`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`institutionFk`) REFERENCES `institution` (`sigla`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES
+(1,'Admin User','admin@unifei.edu.br','adminpassword','UNIFEI','ADMIN','2024-11-18 19:27:12'),
+(4,'Alice Johnson','alicejohnson@unifei.edu.br','alicepass','UNIFEI','USER','2024-11-18 19:27:12'),
+(5,'Bob Brown','bobbrown@unifei.edu.br','bobbrown123','UNIFEI','USER','2024-11-18 19:27:12'),
+(3,'Jane Smith','janesmith@unifei.edu.br','securepass','UNIFEI','USER','2024-11-18 19:27:12'),
+(2,'John Doe','johndoe@unifei.edu.br','password123','UNIFEI','USER','2024-11-18 19:27:12');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
+
+-- Dump completed on 2024-11-22 14:22:04
