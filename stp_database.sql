@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS professor_discipline (
     UNIQUE (id)
 );
 
+
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER AUTO_INCREMENT UNIQUE, -- Auto incremento para facilitar a identificação
     name VARCHAR(255) NOT NULL, -- Nome do usuário
@@ -74,6 +75,25 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (institutionFk) REFERENCES institution(sigla) -- Chave estrangeira
 );
 
+CREATE TABLE IF NOT EXISTS classrooms (
+    id INTEGER AUTO_INCREMENT UNIQUE,
+    name VARCHAR(255) NOT NULL PRIMARY KEY,
+    institutionFk VARCHAR(15) NOT NULL,
+    creationDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Data de criação
+    FOREIGN KEY (institutionFk) REFERENCES institution(sigla)
+);
+
+INSERT INTO classrooms (name, institutionFk) VALUES
+('Laboratório de Informática 1', 'UNIFEI'),
+('Laboratório de Redes', 'UNIFEI'),
+('Auditório Central', 'UNIFEI'),
+('Sala de Estudos 1', 'UNIFEI'),
+('Sala de Estudos 2', 'UNIFEI'),
+('Laboratório de Física 1', 'UNIFEI'),
+('Sala de Reuniões', 'UNIFEI'),
+('Sala Multimídia', 'UNIFEI'),
+('Biblioteca Central', 'UNIFEI'),
+('Laboratório de Eletrônica', 'UNIFEI');
 
 
 -- Inserindo Instituições

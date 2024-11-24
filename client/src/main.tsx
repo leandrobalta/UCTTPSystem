@@ -14,6 +14,8 @@ import NotFoundPage from "./pages/notfound.page.tsx";
 import { DisciplinesPage } from "./pages/disciplines.page.tsx";
 import { HomePage } from "./pages/home.page.tsx";
 import { UserPage } from "./pages/users.page.tsx";
+import { ClassroomsPage } from "./pages/classrooms.page.tsx";
+import { InstitutionPage } from "./pages/institution.page.tsx";
 //import Login from "./pages/login.page.tsx";
 //import PrivateRoute from "./components/private-route.tsx";
 //import AdminRoute from "./components/admin-route.tsx";
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
                 path: "/users",
                 element: <UserPage />,
             },
+            {
+                path: "/classrooms",
+                element: <ClassroomsPage />,
+            },
+            {
+                path: "/institutions",
+                element: <InstitutionPage />,
+            }
             // ...
 
             // example of admin page

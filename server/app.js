@@ -5,11 +5,13 @@ const professorRoutes = require("./routes/professorRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const disciplineRoutes = require("./routes/disciplineRoutes");
 const userRoutes = require("./routes/userRoutes");
+const classRoomRoutes = require("./routes/classroomRoutes"); 
+const institutionRoutes = require("./routes/institutionRoutes");
 
 const cors = require("cors");
 
 const corsOptions = {
-    origin: "http://localhost:5173", // URL do seu frontend
+    origin: "http://127.0.0.1:5173", // URL do seu frontend
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Permitir cookies e headers autenticados
 };
@@ -21,6 +23,8 @@ app.use("/stp", professorRoutes);
 app.use("/stp", courseRoutes);
 app.use("/stp", disciplineRoutes);
 app.use("/stp", userRoutes);
+app.use("/stp", classRoomRoutes);
+app.use("/stp", institutionRoutes);
 
 sequelize
   .sync()

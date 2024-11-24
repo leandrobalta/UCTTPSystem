@@ -125,6 +125,8 @@ export default function BasePage({ children }: any) {
     pages.push({ name: "Disciplinas", icon: <PersonIcon />, path: "/disciplines" });
     pages.push({ name: "Cursos", icon: <PersonIcon />, path: "/courses" });
     pages.push({ name: "Usuários", icon: <PersonIcon />, path: "/users" });
+    pages.push({ name: "Salas", icon: <EventSeatIcon />, path: "/classrooms" });
+    pages.push({ name: "Instituições", icon: <EventSeatIcon />, path: "/institutions" });
 
     // POG for admin pages
     // if (sessionStorage.getItem("aXNBZG1pbg==") === "ZmxhZ3tuMF92dWxuM3I0YjFsaXRpM3NfaDNyM30=") {

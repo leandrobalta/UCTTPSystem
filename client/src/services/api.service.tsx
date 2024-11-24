@@ -27,6 +27,9 @@ async function call<T>(props: CallProps): Promise<Envelope<T>> {
             method: props.method,
             headers,
             body: JSON.stringify(props.body),
+            //mode: "no-cors",
+            //credentils: "include"
+            
         });
 
 

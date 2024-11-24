@@ -14,46 +14,42 @@ import {
     DialogContent,
     TextField,
     DialogActions,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
     InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useConfirm, useSnackbar } from "../hooks/use-alert-utils";
 import { useLoading } from "../hooks/use-loading";
-import { UserModel, UserLevel } from "../models/user.model";
-import { UserService } from "../services/user.service";
+import { ClassroomModel } from "../models/classroom.model";
+import { ClassroomService } from "../services/classroom.service";
 
-export function UserPage() {
+export function ClassroomsPage() {
     const { confirm } = useConfirm();
     const navigate = useNavigate();
     const { snackbar } = useSnackbar();
     const { setLoading } = useLoading();
 
-    const [users, setUsers] = useState<UserModel[]>([]);
-    const [filteredUsers, setFilteredUsers] = useState<UserModel[]>([]);
+    const [classrooms, setClassrooms] = useState<ClassroomModel[]>([]);
+    const [filteredClassrooms, setFilteredClassrooms] = useState<ClassroomModel[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [addOpen, setAddOpen] = useState(false);
     const [editDialog, setEditDialog] = useState(false);
-    const [editUser, setEditUser] = useState<UserModel>({} as UserModel);
-    const [userToAdd, setUserToAdd] = useState<UserModel>({} as UserModel);
+    const [editClassroom, setEditClassroom] = useState<ClassroomModel>({} as ClassroomModel);
+    const [classroomToAdd, setClassroomToAdd] = useState<ClassroomModel>({} as ClassroomModel);
 
     const handleDialogOpen = () => setAddOpen(true);
     const handleDialogClose = () => setAddOpen(false);
 
-    const handleEditUser = (user: UserModel) => {
-        if (user) {
-            setEditUser(user);
+    const handleEditClassroom = (classroom: ClassroomModel) => {
+        if (classroom) {
+            setEditClassroom(classroom);
             setEditDialog(true);
             handleDialogOpen();
         }
     };
 
-    const fetchUsers = async () => {
+    const fetchClassrooms = async () => {
         setLoading(true);
-        const response = await UserService.getAllUsers(navigate);
+        const response = await ClassroomService.getAllClassrooms(navigate);
 
         if (!response.success) {
             snackbar({
@@ -64,17 +60,21 @@ export function UserPage() {
         }
 
         if (response.data) {
-            setUsers(response.data);
-            setFilteredUsers(response.data); // Inicializa com todos os usuários
+            setClassrooms(response.data);
+            setFilteredClassrooms(response.data);
         }
 
         setLoading(false);
     };
 
-    const handleSaveUser = async () => {
+    const handleSaveClassroom = async () => {
         setLoading(true);
         if (editDialog) {
-            const updateResp = await UserService.updateUser(navigate, editUser, editUser.email);
+            const updateResp = await ClassroomService.updateClassroom(
+                navigate,
+                editClassroom,
+                editClassroom.id
+            );
 
             snackbar({
                 severity: updateResp.success ? "success" : "error",
@@ -82,9 +82,9 @@ export function UserPage() {
                 delay: 5000,
             });
 
-            fetchUsers();
+            fetchClassrooms();
         } else {
-            const addResp = await UserService.addUser(navigate, userToAdd);
+            const addResp = await ClassroomService.addClassroom(navigate, classroomToAdd);
 
             snackbar({
                 severity: addResp.success ? "success" : "error",
@@ -92,16 +92,16 @@ export function UserPage() {
                 delay: 5000,
             });
 
-            fetchUsers();
+            fetchClassrooms();
         }
         setLoading(false);
         setAddOpen(false);
         setEditDialog(false);
     };
 
-    const handleDeleteUser = async (user: UserModel) => {
+    const handleDeleteClassroom = async (classroom: ClassroomModel) => {
         setLoading(true);
-        const deleteResp = await UserService.deleteUser(navigate, user);
+        const deleteResp = await ClassroomService.deleteClassroom(navigate, classroom);
 
         snackbar({
             severity: deleteResp.success ? "success" : "error",
@@ -109,13 +109,13 @@ export function UserPage() {
             delay: 5000,
         });
 
-        fetchUsers();
+        fetchClassrooms();
         setLoading(false);
     };
 
     const handleCancel = () => {
-        setUserToAdd({} as UserModel);
-        setEditUser({} as UserModel);
+        setClassroomToAdd({} as ClassroomModel);
+        setEditClassroom({} as ClassroomModel);
         setEditDialog(false);
         handleDialogClose();
     };
@@ -124,18 +124,14 @@ export function UserPage() {
         const value = event.target.value.toLowerCase();
         setSearchTerm(value);
 
-        // Filtrar os dados com base no termo de pesquisa
-        const filtered = users.filter(
-            (user) =>
-                user.name.toLowerCase().includes(value) ||
-                user.email.toLowerCase().includes(value) ||
-                user.institutionFk.toLowerCase().includes(value)
+        const filtered = classrooms.filter((classroom) =>
+            classroom.name.toLowerCase().includes(value)
         );
-        setFilteredUsers(filtered);
+        setFilteredClassrooms(filtered);
     };
 
     useEffect(() => {
-        fetchUsers();
+        fetchClassrooms();
     }, []);
 
     return (
@@ -163,7 +159,7 @@ export function UserPage() {
                     onClick={handleDialogOpen}
                     className="ml-4"
                 >
-                    Adicionar Usuário
+                    Adicionar Sala
                 </Button>
             </div>
 
@@ -173,28 +169,27 @@ export function UserPage() {
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }}>Nível</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Instituição</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredUsers.map((user) => (
-                            <TableRow key={user.id}>
-                                <TableCell>{user.name}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>{user.userLevel}</TableCell>
-                                <TableCell>{user.institutionFk}</TableCell>
+                        {filteredClassrooms.map((classroom) => (
+                            <TableRow key={classroom.id}>
+                                <TableCell>{classroom.name}</TableCell>
+                                <TableCell>{classroom.institutionFk}</TableCell>
                                 <TableCell>
-                                    <Button startIcon={<Edit />} onClick={() => handleEditUser(user)} />
+                                    <Button
+                                        startIcon={<Edit />}
+                                        onClick={() => handleEditClassroom(classroom)}
+                                    />
                                     <Button
                                         startIcon={<Delete />}
                                         onClick={() =>
                                             confirm({
-                                                title: "Deletar Usuário",
-                                                description: `Tem certeza que deseja deletar o usuário [${user.name}]? Essa ação é irreversível.`,
-                                                handleConfirm: () => handleDeleteUser(user),
+                                                title: "Deletar Sala",
+                                                description: `Tem certeza que deseja deletar a sala [${classroom.name}]? Essa ação é irreversível.`,
+                                                handleConfirm: () => handleDeleteClassroom(classroom),
                                             })
                                         }
                                     />
@@ -207,62 +202,35 @@ export function UserPage() {
 
             {/* Diálogo de Adicionar/Editar */}
             <Dialog open={addOpen} onClose={handleDialogClose}>
-                <DialogTitle>{editDialog ? "Editar Usuário" : "Adicionar Usuário"}</DialogTitle>
+                <DialogTitle>{editDialog ? "Editar Sala" : "Adicionar Sala"}</DialogTitle>
                 <DialogContent>
                     <div className="flex flex-col gap-4">
                         <TextField
                             label="Nome"
                             variant="outlined"
-                            value={editDialog ? editUser.name : userToAdd.name}
+                            value={editDialog ? editClassroom.name : classroomToAdd.name}
                             onChange={(e) =>
                                 editDialog
-                                    ? setEditUser({ ...editUser, name: e.target.value })
-                                    : setUserToAdd({ ...userToAdd, name: e.target.value })
+                                    ? setEditClassroom({ ...editClassroom, name: e.target.value })
+                                    : setClassroomToAdd({ ...classroomToAdd, name: e.target.value })
                             }
                         />
-                        <TextField
-                            label="Email"
-                            variant="outlined"
-                            value={editDialog ? editUser.email : userToAdd.email}
-                            onChange={(e) =>
-                                editDialog
-                                    ? setEditUser({ ...editUser, email: e.target.value })
-                                    : setUserToAdd({ ...userToAdd, email: e.target.value })
-                            }
-                            disabled={editDialog}
-                        />
-                        {!editDialog && (
-                            <TextField
-                                label="Senha"
-                                variant="outlined"
-                                type="password"
-                                value={userToAdd.password || ""}
-                                onChange={(e) => setUserToAdd({ ...userToAdd, password: e.target.value })}
-                            />
-                        )}
-                        <FormControl>
-                            <InputLabel id="user-level-label">Nível</InputLabel>
-                            <Select
-                                labelId="user-level-label"
-                                value={editDialog ? editUser.userLevel : userToAdd.userLevel}
-                                onChange={(e) =>
-                                    editDialog
-                                        ? setEditUser({ ...editUser, userLevel: e.target.value as UserLevel })
-                                        : setUserToAdd({ ...userToAdd, userLevel: e.target.value as UserLevel })
-                                }
-                            >
-                                <MenuItem value={UserLevel.ADMIN}>Administrador</MenuItem>
-                                <MenuItem value={UserLevel.USER}>Usuário</MenuItem>
-                            </Select>
-                        </FormControl>
                         <TextField
                             label="Instituição"
                             variant="outlined"
-                            value={editDialog ? editUser.institutionFk : userToAdd.institutionFk}
+                            value={
+                                editDialog ? editClassroom.institutionFk : classroomToAdd.institutionFk
+                            }
                             onChange={(e) =>
                                 editDialog
-                                    ? setEditUser({ ...editUser, institutionFk: e.target.value })
-                                    : setUserToAdd({ ...userToAdd, institutionFk: e.target.value })
+                                    ? setEditClassroom({
+                                          ...editClassroom,
+                                          institutionFk: e.target.value,
+                                      })
+                                    : setClassroomToAdd({
+                                          ...classroomToAdd,
+                                          institutionFk: e.target.value,
+                                      })
                             }
                         />
                     </div>
@@ -271,7 +239,7 @@ export function UserPage() {
                     <Button onClick={handleCancel} variant="contained" color="warning">
                         Cancelar
                     </Button>
-                    <Button onClick={handleSaveUser} variant="contained" color="primary">
+                    <Button onClick={handleSaveClassroom} variant="contained" color="primary">
                         Salvar
                     </Button>
                 </DialogActions>
