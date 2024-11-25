@@ -70,11 +70,7 @@ export function ClassroomsPage() {
     const handleSaveClassroom = async () => {
         setLoading(true);
         if (editDialog) {
-            const updateResp = await ClassroomService.updateClassroom(
-                navigate,
-                editClassroom,
-                editClassroom.id
-            );
+            const updateResp = await ClassroomService.updateClassroom(navigate, editClassroom, editClassroom.id);
 
             snackbar({
                 severity: updateResp.success ? "success" : "error",
@@ -124,9 +120,7 @@ export function ClassroomsPage() {
         const value = event.target.value.toLowerCase();
         setSearchTerm(value);
 
-        const filtered = classrooms.filter((classroom) =>
-            classroom.name.toLowerCase().includes(value)
-        );
+        const filtered = classrooms.filter((classroom) => classroom.name.toLowerCase().includes(value));
         setFilteredClassrooms(filtered);
     };
 
@@ -180,10 +174,12 @@ export function ClassroomsPage() {
                                 <TableCell>{classroom.institutionFk}</TableCell>
                                 <TableCell>
                                     <Button
+                                        aria-label="editar"
                                         startIcon={<Edit />}
                                         onClick={() => handleEditClassroom(classroom)}
                                     />
                                     <Button
+                                        aria-label="remover"
                                         startIcon={<Delete />}
                                         onClick={() =>
                                             confirm({
@@ -207,6 +203,7 @@ export function ClassroomsPage() {
                     <div className="flex flex-col gap-4">
                         <TextField
                             label="Nome"
+                            name="nome"
                             variant="outlined"
                             value={editDialog ? editClassroom.name : classroomToAdd.name}
                             onChange={(e) =>
@@ -216,11 +213,10 @@ export function ClassroomsPage() {
                             }
                         />
                         <TextField
+                            name="instituicao"
                             label="Instituição"
                             variant="outlined"
-                            value={
-                                editDialog ? editClassroom.institutionFk : classroomToAdd.institutionFk
-                            }
+                            value={editDialog ? editClassroom.institutionFk : classroomToAdd.institutionFk}
                             onChange={(e) =>
                                 editDialog
                                     ? setEditClassroom({
