@@ -5,6 +5,9 @@ from utils.format import format_schedule
 from utils.color_assignment import color_function
 import networkx as nx
 import matplotlib.pyplot as plt
+import openpyxl
+from openpyxl.styles import Alignment, Font
+from typing import List, Dict
 
 
 def get_most_teacher_classes(graph: Graph):
@@ -56,9 +59,9 @@ def define_weight(graph: Graph):
         discipline = graph.graph.nodes[node]["discipline"]
         weight = 0
         if sin_discipline(discipline):
-            weight += 10
+            weight += 20
         if cco_discipline(discipline):
-            weight += 5
+            weight += 10
         if most_teacher_classes(discipline):
             weight += 3
         if most_heavy_semester(discipline):
@@ -69,18 +72,35 @@ def define_weight(graph: Graph):
     return graph
 
 
-def available_schedule(slots: list, slot: int, discipline: Discipline):
-    for existing_discipline in slots[slot]:
-        if existing_discipline["teacher"] == discipline.teacher:
-            return False
+def evaluate_schedule_score(
+    graph: Graph, slots: list, slot: int, discipline: Discipline, day: str
+):
+    score = 0
 
-    for existing_discipline in slots[slot]:
-        if (
-            discipline.semester == existing_discipline["semester"]
-            and discipline.course == existing_discipline["course"]
-        ):
-            return False
+    # **Penalidades**
 
+    if day.lower() == "saturday" and discipline.course.lower() in ["sin", "cco"]:
+        return float("-inf")
+
+    # Penaliza por conflito de professor ou semestre/curso
+    for existing_discipline in slots[slot]:
+        if graph.graph.has_edge(discipline.index, existing_discipline["index"]):
+            return float("-inf")
+
+    # Penaliza se já houverem 8 ou mais aulas do curso no semestre naquele dia
+    count = 0
+    for day_slots in slots:
+        for existing_discipline in day_slots:
+            if (
+                discipline.semester == existing_discipline["semester"]
+                and discipline.course == existing_discipline["course"]
+            ):
+                count += 1
+
+    if count >= 8:
+        score -= 3
+
+    # Penaliza se a disciplina já tiver o limite de aulas por dia
     count = 0
     for day_slots in slots:
         for existing_discipline in day_slots:
@@ -88,11 +108,11 @@ def available_schedule(slots: list, slot: int, discipline: Discipline):
                 count += 1
 
             if count >= 2 and discipline.ch == 4:
-                return False
+                score -= 8
+            elif count >= 3 and discipline.ch == 5:
+                score -= 8
 
-            if count >= 3 and discipline.ch == 5:
-                return False
-
+    # Penaliza se o professor tiver mais de 6 aulas no dia
     count = 0
     for day_slots in slots:
         for existing_discipline in day_slots:
@@ -100,65 +120,95 @@ def available_schedule(slots: list, slot: int, discipline: Discipline):
                 count += 1
 
             if count >= 6:
-                return False
+                score -= 2
 
-    return True
+    # Penaliza se o slot já tiver o limite máximo de disciplinas (8)
+    if len(slots[slot]) >= 8:
+        score -= 3
+
+    # **Benefícios**
+
+    # Adiciona pontos para slot vazio
+    if len(slots[slot]) == 0:
+        score += 3
+
+    # Adiciona pontos para continuidade de horário (se disciplina requer mais de uma aula seguida)
+    if discipline.ch > 2:
+        if slot > 0 and any(
+            discipline_in_slot["index"] == discipline.index
+            for discipline_in_slot in slots[slot - 1]
+        ):
+            score += 6
+        if slot < len(slots) - 1 and any(
+            discipline_in_slot["index"] == discipline.index
+            for discipline_in_slot in slots[slot + 1]
+        ):
+            score += 6
+
+    # Adiciona pontos para distribuição balanceada de aulas por professor no dia (menos de 5 aulas)
+    if count < 5:
+        score += 2
+
+    # Adiciona pontos para slots que ajudam a distribuir o curso e semestre de forma balanceada na semana
+    if count < 5:
+        score += 1
+
+    return score
 
 
 def is_night_period(discipline: Discipline, slot: int):
     return discipline.course.lower() == "sin" and slot >= 10
 
 
-def is_saturday_course(discipline: Discipline):
-    return discipline.course.lower() not in ["sin", "cco"]
-
-
 def generate_schedule(graph: Graph):
     for node in graph.order_by_weight():
         discipline = graph.graph.nodes[node]["discipline"]
-        allocated_slots = 0
-        while allocated_slots < discipline.ch:
+        slots_needed = discipline.ch
+
+        # Loop até alocar todos os slots necessários para a carga horária
+        while slots_needed > 0:
+            best_slot_sequence = None
+            best_score = float("-inf")
+
             for day_schedule in graph.schedules.get_schedule():
                 for day, slots in day_schedule.items():
                     for slot in range(len(slots)):
 
+                        # Verifica restrições de horários
                         if discipline.course.lower() == "sin" and not is_night_period(
                             discipline, slot
                         ):
                             continue
 
-                        if day == "Saturday" and not is_saturday_course(discipline):
-                            continue
+                        # Avalia o slot atual e calcula a pontuação
+                        score = evaluate_schedule_score(
+                            graph, slots, slot, discipline, day
+                        )
 
-                        if available_schedule(slots, slot, discipline):
-                            slots[slot].append(
-                                {
-                                    "name": discipline.name,
-                                    "code": discipline.code,
-                                    "teacher": discipline.teacher,
-                                    "course": discipline.course,
-                                    "semester": discipline.semester,
-                                    "ch": discipline.ch,
-                                    "index": discipline.index,
-                                }
-                            )
-                            discipline.add_schedule({day: slot})
-                            allocated_slots += 1
+                        # Se a pontuação é a melhor até agora, salva o slot
+                        if score > best_score:
+                            best_score = score
+                            best_slot_sequence = (day, slots, slot)
 
-                        if allocated_slots >= discipline.ch:
-                            break
-
-                    if allocated_slots >= discipline.ch:
-                        break
-
-                if allocated_slots >= discipline.ch:
-                    break
-
-        if allocated_slots < discipline.ch:
-            print(
-                f"Não foi possível alocar a disciplina {discipline.name} ({discipline.code})"
-            )
-
+            # Aloca o slot se encontrou uma posição adequada
+            if best_slot_sequence and best_score > 0:
+                day, slots, slot = best_slot_sequence
+                slots[slot].append(
+                    {
+                        "name": discipline.name,
+                        "code": discipline.code,
+                        "teacher": discipline.teacher,
+                        "course": discipline.course,
+                        "semester": discipline.semester,
+                        "ch": discipline.ch,
+                        "index": discipline.index,
+                    }
+                )
+                discipline.add_schedule({day: slot})
+                slots_needed -= 1
+            else:
+                # Se não há slots disponíveis para a disciplina, interrompe o loop
+                break
     return graph
 
 
@@ -193,7 +243,7 @@ def generate_graph(data: list):
         graph.add_node(discipline)
 
     graph = generate_edge(graph)
-    # print(f"Total classes: {count}")
+    print(f"Total classes: {count}")
     return graph
 
 
@@ -216,7 +266,60 @@ def plot_graph(graph: Graph):
     nx.draw(graph.graph, pos, node_color=colors, with_labels=True)
 
     plt.show()
-    plt.waitforbuttonpress()
+
+
+def create_schedule_excel(graph, filename: str = "schedule.xlsx"):
+    # Criação do workbook e planilhas
+    workbook = openpyxl.Workbook()
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+    # Função para determinar o horário com base no índice do slot
+    def get_slot_time(slot_index: int) -> str:
+        if 0 <= slot_index <= 4:
+            times = ["7:00", "7:55", "8:50", "10:00", "10:55"]
+            return times[slot_index]
+        elif 5 <= slot_index <= 9:
+            times = ["13:00", "13:55", "14:50", "16:00", "16:55"]
+            return times[slot_index - 5]
+        else:
+            times = ["19:00", "19:50", "21:00", "21:50", "22:40"]
+            return times[(slot_index - 10) % len(times)]
+
+    # Iterar pelos horários e disciplinas no cronograma
+    for day_schedule in graph.schedules.get_schedule():
+        for day, slots in day_schedule.items():
+            # Criar uma nova aba para cada dia da semana
+            sheet = workbook.create_sheet(title=day.capitalize())
+            sheet.append(["Hour Slot", "Disciplines"])  # Cabeçalho
+            sheet.column_dimensions["A"].width = 12
+            sheet.column_dimensions["B"].width = 200
+
+            for slot_index, disciplines in enumerate(slots):
+                if disciplines:
+                    discipline_info = "; ".join(
+                        [discipline["name"] for discipline in disciplines]
+                    )
+                else:
+                    discipline_info = "Free"
+
+                # Adicionar dados à planilha
+                sheet.append([get_slot_time(slot_index), discipline_info])
+
+    # Remove a planilha padrão criada automaticamente
+    if "Sheet" in workbook.sheetnames:
+        del workbook["Sheet"]
+
+    # Estilo do cabeçalho
+    for sheet_name in days:
+        if sheet_name.capitalize() in workbook.sheetnames:
+            sheet = workbook[sheet_name.capitalize()]
+            for cell in sheet[1]:  # Primeira linha
+                cell.font = Font(bold=True)
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+
+    # Salvar o arquivo Excel
+    workbook.save(filename)
+    print(f"Schedule exported successfully to {filename}.")
 
 
 def main():
@@ -225,8 +328,10 @@ def main():
     graph = define_weight(graph)
     graph = generate_schedule(graph)
     format_schedule(graph)
-    plot_graph(graph)
-    graph.print_disciplines()
+    # plot_graph(graph)
+    # graph.print_disciplines()
+    graph.schedules.print_schedule()
+    # create_schedule_excel(graph)
 
 
 if __name__ == "__main__":
