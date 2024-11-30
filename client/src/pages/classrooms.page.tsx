@@ -70,7 +70,7 @@ export function ClassroomsPage() {
     const handleSaveClassroom = async () => {
         setLoading(true);
         if (editDialog) {
-            const updateResp = await ClassroomService.updateClassroom(navigate, editClassroom, editClassroom.id);
+            const updateResp = await ClassroomService.updateClassroom(navigate, editClassroom, editClassroom.name);
 
             snackbar({
                 severity: updateResp.success ? "success" : "error",
@@ -133,6 +133,7 @@ export function ClassroomsPage() {
             {/* Barra de Pesquisa e Botão Adicionar */}
             <div className="flex w-full justify-between items-center gap-10">
                 <TextField
+                    name="search"
                     label="Pesquisar"
                     variant="outlined"
                     value={searchTerm}
@@ -211,6 +212,7 @@ export function ClassroomsPage() {
                                     ? setEditClassroom({ ...editClassroom, name: e.target.value })
                                     : setClassroomToAdd({ ...classroomToAdd, name: e.target.value })
                             }
+                            disabled={editDialog}
                         />
                         <TextField
                             name="instituicao"

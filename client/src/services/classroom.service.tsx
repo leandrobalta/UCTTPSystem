@@ -10,7 +10,7 @@ interface ClassroomDTO {
     InstitutionFk: string;
 }
 
-const getClassroomById = async (navFunction: NavigateFunction, id: number) => {
+const getClassroomById = async (navFunction: NavigateFunction, id: string) => {
     const response = await ApiService.call<ClassroomModel>({
         action: `stp/classroom/${id}`,
         method: HttpMethod.GET,
@@ -50,7 +50,7 @@ const addClassroom = async (navFunction: NavigateFunction, classroom: ClassroomM
 const updateClassroom = async (
     navFunction: NavigateFunction,
     classroom: ClassroomModel,
-    id: number
+    id: string
 ) => {
     const response = await ApiService.call<any>({
         action: `stp/classroom/${id}`,
@@ -66,7 +66,7 @@ const updateClassroom = async (
 
 const deleteClassroom = async (navFunction: NavigateFunction, classroom: ClassroomModel) => {
     const response = await ApiService.call<any>({
-        action: `stp/classroom/${classroom.id}`,
+        action: `stp/classroom/${classroom.name}`,
         method: HttpMethod.DELETE,
         navFunction,
         port: prodPort,
