@@ -9,6 +9,7 @@ import openpyxl
 from openpyxl.styles import Alignment, Font
 from typing import List, Dict
 import json
+import pandas as pd
 
 
 def get_most_teacher_classes(graph: Graph):
@@ -248,6 +249,28 @@ def generate_graph(data: list):
     return graph
 
 
+def generate_graph_from_dataframe(data: pd.DataFrame):
+    graph = Graph()
+    count = 0
+
+    for index, row in data.iterrows():
+        count += row["ch"]
+        discipline = Discipline(
+            index,
+            row["name"],
+            row["teacher"],
+            row["code"],
+            row["semester"],
+            row["ch"],
+            row["course"],
+        )
+        graph.add_node(discipline)
+
+    graph = generate_edge(graph)
+    # print(f"Total classes: {count}")
+    return graph
+
+
 def plot_graph(graph: Graph):
 
     color_map = {}
@@ -367,8 +390,10 @@ def create_schedule_json(graph):
 
 
 def main():
-    data = read_json_data("cenarios/cenario1.json")
-    graph = generate_graph(data)
+    #data = read_json_data("cenarios/cenario1.json")
+    data = pd.read_csv("../script/timetable.csv")
+    #graph = generate_graph(data)
+    graph = generate_graph_from_dataframe(data)
     graph = define_weight(graph)
     graph = generate_schedule(graph)
     format_schedule(graph)
@@ -377,6 +402,8 @@ def main():
     #graph.schedules()
     #create_schedule_excel(graph)
     #print(type(graph))
+    with open("timetable.json", "w") as f:
+        f.write(create_schedule_json(graph))
     print(create_schedule_json(graph))
 
 

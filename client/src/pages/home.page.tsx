@@ -29,27 +29,46 @@ export function HomePage() {
             });
             return;
         }
+
         setLoading(true);
 
-        const formData = new FormData();
-        formData.append("file", file);
+        try {
+            const fileContent = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = () => reject(new Error("Erro ao ler o arquivo"));
+                reader.readAsText(file); // Lê o conteúdo como texto
+            });
 
-        const response = await TimetableService.getTimetable(navigate, formData);
+            // Faz a requisição enviando o conteúdo do arquivo
+            const response = await TimetableService.getTimetable(navigate, fileContent);
 
-        if (!response.success) {
+            if (!response.success) {
+                snackbar({
+                    severity: "error",
+                    message: response.message,
+                    delay: 5000,
+                });
+            } else if (response.data) {
+                setTimetable(response.data);
+                const days = Object.keys(response.data);
+                const times = Array.from(
+                    new Set(days.flatMap((day: string) => response.data[day].map((entry: any) => entry.time)))
+                );
+
+                console.log("Days:", days);
+                console.log("Times:", times);
+            }
+        } catch (error) {
             snackbar({
                 severity: "error",
-                message: response.message,
+                message: "Erro ao processar o arquivo",
                 delay: 5000,
             });
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
-
-        if (response.data) {
-            setTimetable(response.data);
-            days = Object.keys(timetable);
-            times = Array.from(new Set(days.flatMap((day: string) => timetable[day].map((entry: any) => entry.time))));
-        }
-        setLoading(false);
     };
 
     return (
@@ -58,7 +77,7 @@ export function HomePage() {
             <div className="flex flex-row gap-2 items-center">
                 <input
                     type="file"
-                    accept="*"
+                    accept=".csv"
                     onChange={(e) =>
                         confirm({
                             title: "Confirmação",

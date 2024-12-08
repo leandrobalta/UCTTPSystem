@@ -1,0 +1,50 @@
+course,name,semester,code,ch,teacher
+CCO,Fundamentos de Programação,1,XDES01,4,Prof 12
+CCO,Arquitetura de Computadores I,1,CRSC03,4,Prof 13
+CCO,Matemática Discreta,1,XMAC01,4,Prof 5
+CCO,Projeto Integrado,1,CAHC04,2,Prof 16
+CCO,Programação Orientada a Objetos,3,XDES02,4,Prof 9
+CCO,Engenharia de Software I,3,XDES04,4,Prof 1
+CCO,Sistemas Operacionais,3,CRSC02,4,Prof 13
+CCO,Algoritmos e Estrutura de Dados II,3,CTCO02,4,Prof 18
+CCO,Métodos Matemáticos para Análise de Dados,3,XMAC02,4,Prof 9
+CCO,Algoritmos em Grafos,3,CMAC03,4,Prof 16
+CCO,Análise e Projeto de Algoritmos II,5,CIC111,3,Prof 14
+CCO,Linguagens Formais e Autômatos,5,CIC132,4,Prof 5
+CCO,Engenharia de Software II,5,COM211,4,Prof 11
+CCO,Computação Orientada a Objetos II,5,COM221,4,Prof 10
+CCO,Banco de Dados I,5,COM230,4,Prof 12
+CCO,Redes de Computadores,5,COM240,4,Prof 4
+CCO,Análise de Investimento em Informática,5,COM311,3,Prof 2
+CCO,Processamento Digital de Imagens,7,CIC271,4,Prof 7
+CCO,Gerência de Projeto de Software,7,COM212,4,Prof 1
+CCO,Interação Humano-Computador,7,COM213,4,Prof 6
+CCO,Desenvolvimento de Sistemas na Web,7,COM222,5,Prof 15
+CCO,Sistemas Distribuídos,7,COM242,4,Prof 16
+SIN,Fundamentos de Programação,1,XDES01,4,Prof 15
+SIN,Organização e Arquitetura de Computadores,3,SRSC03,4,Prof 11
+SIN,Fundamentos de Lógica e Matemática Discre,3,MAT017,4,Prof 5
+SIN,Computação Orientada a Objetos I,3,COM220,4,Prof 9
+SIN,Sistemas Inteligentes,5,SIN260,4,Prof 7
+SIN,Redes de Computadores,5,COM240,4,Prof 4
+SIN,Linguagens Formais e Autômatos,5,SIN132,4,Prof 5
+SIN,Banco de Dados II,5,COM231,4,Prof 18
+SIN,Governança de TI,7,SIN210,4,Prof 8
+SIN,Interação Humano-Computador,7,COM213,4,Prof 6
+SIN,Desenvolvimento de Aplicações em SI,7,SIN412,5,Prof 10
+SIN,Inteligência de Negócios,7,SIN413,4,Prof 8
+SIN,Auditoria e Segurança de Sistemas de Inform,7,SIN414,3,Prof 4
+SIN,Organização e Métodos,7,SIN313,3,Prof 2
+Outros Cursos,Fundamentos de Programação (EMT),1,CCO016,4,Prof 3
+Outros Cursos,Fundamentos de Programação (EME),1,CCO016,4,Prof 3
+Outros Cursos,Fundamentos de Programação (EBP / ECI),1,CCO016,4,Prof 3
+Outros Cursos,Fundamentos de Programação (MBA),1,CCO016,4,Prof 11
+Outros Cursos,Fundamentos de Programação (EMA / EEN),1,CCO016,4,Prof 3
+Optativas,Metaheurísticas para Problemas de Otimizaç,3,OPT1,4,Prof 17
+Optativas,Redes Complexas,3,OPT2,4,Prof 18
+Optativas,Cloud Computing,5,OPT3,4,Prof 1
+Optativas,Tópicos em Ciência de Dados,3,OPT4,4,Prof 7
+Pós- Graduação,Design Patterns,3,POS1,4,Prof 14
+Pós- Graduação,Visualização da Informação,4,POS2,4,Prof 13
+Pós- Graduação,Visão Computacional,5,POS3,4,Prof 12
+Pós- Graduação,Robótica,5,POS5,4,Prof 6
