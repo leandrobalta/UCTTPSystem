@@ -185,3 +185,9 @@ __pycache__
 
 
 old.*
+
+
+venv
+
+*.xlsx
+*.json

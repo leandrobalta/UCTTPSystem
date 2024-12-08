@@ -66,7 +66,7 @@ const router = createBrowserRouter([
             {
                 path: "/institutions",
                 element: <InstitutionPage />,
-            }
+            },
             // ...
 
             // example of admin page

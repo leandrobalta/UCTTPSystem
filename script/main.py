@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import openpyxl
 from openpyxl.styles import Alignment, Font
 from typing import List, Dict
+import json
 
 
 def get_most_teacher_classes(graph: Graph):
@@ -243,7 +244,7 @@ def generate_graph(data: list):
         graph.add_node(discipline)
 
     graph = generate_edge(graph)
-    print(f"Total classes: {count}")
+    #print(f"Total classes: {count}")
     return graph
 
 
@@ -322,16 +323,61 @@ def create_schedule_excel(graph, filename: str = "schedule.xlsx"):
     print(f"Schedule exported successfully to {filename}.")
 
 
+def create_schedule_json(graph):
+    # Lista de dias da semana
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+    # Função para determinar o horário com base no índice do slot
+    def get_slot_time(slot_index: int) -> str:
+        if 0 <= slot_index <= 4:
+            times = ["7:00", "7:55", "8:50", "10:00", "10:55"]
+            return times[slot_index]
+        elif 5 <= slot_index <= 9:
+            times = ["13:00", "13:55", "14:50", "16:00", "16:55"]
+            return times[slot_index - 5]
+        else:
+            times = ["19:00", "19:50", "21:00", "21:50", "22:40"]
+            return times[(slot_index - 10) % len(times)]
+
+    # Dicionário para armazenar o cronograma
+    schedule = {}
+
+    # Iterar pelos horários e disciplinas no cronograma
+    for day_schedule in graph.schedules.get_schedule():
+        for day, slots in day_schedule.items():
+            day_data = []  # Lista para armazenar os slots do dia
+
+            for slot_index, disciplines in enumerate(slots):
+                if disciplines:
+                    discipline_info = [discipline["name"] for discipline in disciplines]
+                else:
+                    discipline_info = ["Free"]
+
+                # Adicionar informações do slot ao dia
+                day_data.append({
+                    "time": get_slot_time(slot_index),
+                    "disciplines": discipline_info
+                })
+
+            # Adicionar dados do dia ao cronograma
+            schedule[day.capitalize()] = day_data
+
+    # Retornar o cronograma como JSON
+    return json.dumps(schedule, indent=4)
+
+
 def main():
     data = read_json_data("cenarios/cenario1.json")
     graph = generate_graph(data)
     graph = define_weight(graph)
     graph = generate_schedule(graph)
     format_schedule(graph)
-    # plot_graph(graph)
-    # graph.print_disciplines()
-    graph.schedules.print_schedule()
-    # create_schedule_excel(graph)
+    #plot_graph(graph)
+    #graph.print_disciplines()
+    #graph.schedules()
+    #create_schedule_excel(graph)
+    #print(type(graph))
+    print(create_schedule_json(graph))
 
 
 if __name__ == "__main__":

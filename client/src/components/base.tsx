@@ -121,7 +121,8 @@ export default function BasePage({ children }: any) {
         });
     };
 
-    let pages = [{ name: "Professores", icon: <PersonIcon />, path: "/professors" }];
+    let pages = [{ name: "Home", icon: <PersonIcon />, path: "/home" }];
+    pages.push({ name: "Professores", icon: <PersonIcon />, path: "/professors" });
     pages.push({ name: "Disciplinas", icon: <PersonIcon />, path: "/disciplines" });
     pages.push({ name: "Cursos", icon: <PersonIcon />, path: "/courses" });
     pages.push({ name: "Usuários", icon: <PersonIcon />, path: "/users" });
