@@ -1,28 +1,30 @@
 const generateTimetable = async (csv) => {
-    // remove the timetable.csv file if exists
+    const apiUrl = "http://localhost:1337/generate-timetable"; // URL do endpoint
 
-    const fs = require("fs");
-    const file = "../script/timetable.csv";
-    if (fs.existsSync(file)) {
-        fs.unlinkSync(file);
+    console.log(csv)
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            body: JSON.stringify(csv), // Envia o conteúdo do arquivo CSV no corpo da requisição
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.statusText}`);
+        }
+
+        const data = await response.json(); // Supõe que a resposta do servidor está no formato JSON
+        console.log("Resposta do servidor:", data);
+
+        return data; // Retorna a resposta do servidor
+    } catch (error) {
+        console.error("Erro ao fazer a requisição:", error);
+        throw error; // Relança o erro para quem chamou a função
     }
-
-    fs.writeFileSync(file, csv.content);
-
-    const { spawn } = require("child_process");
-    const pythonProcess = spawn("../script/venv/bin/python", ["../script/main.py"]);
-    // the generated timetable will be saved ../script/timetable.json file, read and return as response
-    return new Promise((resolve, reject) => {
-        pythonProcess.stdout.on("data", (data) => {
-            const timetable = fs.readFileSync("../script/timetable.json");
-            resolve(JSON.parse(timetable));
-        });
-
-        pythonProcess.stderr.on("data", (data) => {
-            reject(data.toString());
-        });
-    });
-}
+};
 
 module.exports = {
     generateTimetable

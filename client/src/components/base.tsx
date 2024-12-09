@@ -15,8 +15,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import EventSeatIcon from "@mui/icons-material/EventSeat";
-import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
 import { Button, Drawer } from "@mui/material";
 import { useConfirm } from "../hooks/use-alert-utils";
@@ -24,6 +22,13 @@ import { UserService } from "../services/user.service";
 import { useSnackbar } from "../hooks/use-alert-utils";
 import { useLoading } from "../hooks/use-loading";
 import LogoutIcon from "@mui/icons-material/Logout";
+import HomeIcon from "@mui/icons-material/Home";
+import SchoolIcon from "@mui/icons-material/School";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import ClassIcon from "@mui/icons-material/Class";
+import PeopleIcon from "@mui/icons-material/People";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 
 // check if is mobile to set drawnerWidth
 const drawerWidth = window.innerWidth > 768 ? 180 : 240;
@@ -121,13 +126,13 @@ export default function BasePage({ children }: any) {
         });
     };
 
-    let pages = [{ name: "Home", icon: <PersonIcon />, path: "/home" }];
-    pages.push({ name: "Professores", icon: <PersonIcon />, path: "/professors" });
-    pages.push({ name: "Disciplinas", icon: <PersonIcon />, path: "/disciplines" });
-    pages.push({ name: "Cursos", icon: <PersonIcon />, path: "/courses" });
-    pages.push({ name: "Usuários", icon: <PersonIcon />, path: "/users" });
-    pages.push({ name: "Salas", icon: <EventSeatIcon />, path: "/classrooms" });
-    pages.push({ name: "Instituições", icon: <EventSeatIcon />, path: "/institutions" });
+    let pages = [{ name: "Inicio", icon: <HomeIcon />, path: "/home" }];
+    pages.push({ name: "Professores", icon: <SchoolIcon />, path: "/professors" });
+    pages.push({ name: "Disciplinas", icon: <MenuBookIcon />, path: "/disciplines" });
+    pages.push({ name: "Cursos", icon: <ClassIcon />, path: "/courses" });
+    pages.push({ name: "Usuários", icon: <PeopleIcon />, path: "/users" });
+    pages.push({ name: "Salas", icon: <MeetingRoomIcon />, path: "/classrooms" });
+    pages.push({ name: "Instituições", icon: <ApartmentIcon />, path: "/institutions" });
 
     // POG for admin pages
     // if (sessionStorage.getItem("aXNBZG1pbg==") === "ZmxhZ3tuMF92dWxuM3I0YjFsaXRpM3NfaDNyM30=") {
@@ -152,7 +157,7 @@ export default function BasePage({ children }: any) {
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
                         {/* <img src={china_tur_white_title} className="h-10" /> */}
-                        UCTTPSystem
+                        <a href="/home">UCTTPSystem</a>
                     </Typography>
                     {/** add logout buttom at the right of the page */}
                     <div style={{ marginLeft: "auto" }}>

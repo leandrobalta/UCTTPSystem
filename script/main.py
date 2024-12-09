@@ -10,7 +10,8 @@ from openpyxl.styles import Alignment, Font
 from typing import List, Dict
 import json
 import pandas as pd
-
+from flask import Flask, request, jsonify
+from io import StringIO  # Substitui pd.compat.StringIO
 
 def get_most_teacher_classes(graph: Graph):
     teacher_count = {}
@@ -406,6 +407,38 @@ def main():
         f.write(create_schedule_json(graph))
     print(create_schedule_json(graph))
 
+app = Flask(__name__)
+
+@app.route("/generate-timetable", methods=["POST"])
+def generate_timetable():
+    try:
+        # Verifica se o corpo da requisição contém o campo 'content'
+        if not request.json or "content" not in request.json:
+            return jsonify({"error": "CSV content is required in 'content' field"}), 400
+
+        # Lê o conteúdo do CSV a partir do campo 'content' no JSON
+        csv_content = request.json["content"]
+
+        print(csv_content)
+
+        # Converte o conteúdo CSV em um DataFrame
+        data = pd.read_csv(StringIO(csv_content))
+
+        # Gera o grafo (substitua pelas suas funções de processamento)
+        graph = generate_graph_from_dataframe(data)
+        graph = define_weight(graph)
+        graph = generate_schedule(graph)
+
+        # Gera o JSON do cronograma
+        schedule_json = create_schedule_json(graph)
+
+        # Retorna o JSON como resposta
+        return jsonify(json.loads(schedule_json))
+
+    except Exception as e:
+        print(str(e))
+        # Trata erros e retorna uma mensagem de erro
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    main()
+    app.run(host="0.0.0.0", port=1337, debug=True)
